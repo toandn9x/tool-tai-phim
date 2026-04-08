@@ -26,26 +26,14 @@ def get_movie_links(movie_slug):
         server = episodes_list[0]
         server_data = server.get('server_data', [])
         
-        # Sắp xếp theo thứ tự tập phim
-        # Cố gắng chuyển name sang số để sort chính xác (1, 2, ..., 10 thay vì 1, 10, 2)
-        def sort_key(ep):
-            name = ep.get('name', '0')
-            try:
-                return float(name)
-            except ValueError:
-                # Nếu là "SP" hoặc các ký tự khác, đẩy xuống cuối
-                return float('inf')
-
-        sorted_episodes = sorted(server_data, key=sort_key)
-        
         filename = f"{movie_slug}.txt"
         with open(filename, 'w', encoding='utf-8') as f:
-            for ep in sorted_episodes:
+            for ep in server_data:
                 link = ep.get('link_m3u8')
                 if link:
                     f.write(f"{link}\n")
         
-        print(f"Đã lưu {len(sorted_episodes)} tập phim vào file: {filename}")
+        print(f"Đã lưu {len(server_data)} tập phim vào file: {filename}")
         
     except requests.exceptions.RequestException as e:
         print(f"Lỗi kết nối: {e}")
